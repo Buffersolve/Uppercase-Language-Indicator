@@ -1,0 +1,7 @@
+{
+    "uuid": "uppercase-language-indicator@buffersolve",
+    "name": "Uppercase Language Indicator",
+    "description": "Sets the Language indicator in the status area to uppercase.",
+    "shell-version": ["44","43"],
+    "version": 1
+}
