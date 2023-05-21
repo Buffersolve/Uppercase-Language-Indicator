@@ -1,50 +1,64 @@
 const Main = imports.ui.main;
-const Lang = imports.lang;
+const GObject = imports.gi.GObject;
 
-var UppercaseLangIndicator = new Lang.Class({
-    Name: 'UppercaseLangIndicator',
-
-    _init: function() {
+var UppercaseLangIndicator = GObject.registerClass({
+    GTypeName: 'UppercaseLangIndicator',
+}, class UppercaseLangIndicator extends GObject.Object {
+    constructor() {
+        super();
         this._keyboard = Main.panel.statusArea.keyboard;
         this._signalId = 0;
-    },
+        this._originalIndicatorTexts = [];
+    }
 
-    enable: function() {
-        this._signalId = this._keyboard._inputSourceManager.connect('current-source-changed', Lang.bind(this, this._updateIndicator));
+    enable() {
+        this._signalId = this._keyboard._inputSourceManager.connect('current-source-changed', this._updateIndicator.bind(this));
         this._updateIndicator();
-    },
+    }
 
-    disable: function() {
+    disable() {
         if (this._signalId) {
             this._keyboard._inputSourceManager.disconnect(this._signalId);
             this._signalId = 0;
+            this._restoreIndicator();
         }
-    },
+    }
 
-    _updateIndicator: function() {
+    _updateIndicator() {
         let source = this._keyboard._inputSourceManager.currentSource;
 
         if (source) {
             let shortName = source.shortName.toUpperCase();
             let children = this._keyboard._container.get_children();
             for (let i = 0; i < children.length; i++) {
-                this._keyboard._container.get_children()[i].set_text(shortName);
+                let child = this._keyboard._container.get_children()[i];
+                if (this._originalIndicatorTexts[i] === undefined) {
+                    this._originalIndicatorTexts[i] = child.get_text();
+                }
+                child.set_text(shortName);
             }
-        
         }
-    },
+    }
+
+    _restoreIndicator() {
+        let children = this._keyboard._container.get_children();
+        for (let i = 0; i < children.length; i++) {
+            if (this._originalIndicatorTexts[i] !== undefined) {
+                this._keyboard._container.get_children()[i].set_text(this._originalIndicatorTexts[i]);
+            }
+        }
+        this._originalIndicatorTexts = [];
+    }
 });
 
 let _indicator;
 
-function init() {
-    _indicator = new UppercaseLangIndicator();
-}
-
 function enable() {
+    _indicator = new UppercaseLangIndicator();
     _indicator.enable();
 }
 
 function disable() {
     _indicator.disable();
+    _indicator = null;
 }
