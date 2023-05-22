@@ -2,7 +2,7 @@
     "uuid": "uppercase-language-indicator@buffersolve",
     "name": "Uppercase Language Indicator",
     "description": "Sets the Language indicator in the status area to uppercase.",
-    "version": 2,
+    "version": 1,
     "shell-version": ["43","44"],
     "url": "https://github.com/Buffersolve/Uppercase-Language-Indicator"
 }
