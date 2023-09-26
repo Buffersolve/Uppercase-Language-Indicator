@@ -1,5 +1,8 @@
-const Main = imports.ui.main;
-const GObject = imports.gi.GObject;
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import GObject from 'gi://GObject';
+import {
+    Extension
+} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 var UppercaseLangIndicator = GObject.registerClass({
     GTypeName: 'UppercaseLangIndicator',
@@ -53,12 +56,14 @@ var UppercaseLangIndicator = GObject.registerClass({
 
 let _indicator;
 
-function enable() {
-    _indicator = new UppercaseLangIndicator();
-    _indicator.enable();
-}
+export default class UppercaseLangIndicatorExtension extends Extension {
+    enable() {
+        _indicator = new UppercaseLangIndicator();
+        _indicator.enable();
+    }
 
-function disable() {
-    _indicator.disable();
-    _indicator = null;
+    disable() {
+        _indicator.disable();
+        _indicator = null;
+    }
 }
